@@ -426,6 +426,11 @@ export const Chat = ({ orderId, chatName = "Merchant Chat", counterpartyProfileI
                 Sent messages are currently immutable and remain in the order history. To correct a message, send a follow-up; LocalSettle does not silently edit or remove chat records.
             </aside>
             
+            {!isDemo && connectionStatus !== "connected" && (
+                <p role="status" aria-live="polite" className="px-6 py-2 text-xs text-amber-300 bg-amber-950/30">
+                    {connectionLabel}. Messages are not queued while offline; retry any failed message after reconnecting.
+                </p>
+            )}
             {/* Chat Messages Body */}
             <main ref={messagesListRef} onScroll={(event) => {
                 const { scrollTop, scrollHeight, clientHeight } = event.currentTarget;
@@ -480,7 +485,7 @@ export const Chat = ({ orderId, chatName = "Merchant Chat", counterpartyProfileI
                                     )}
                                 </span>
                                 {isOwnMessage && msg.deliveryStatus === "failed" && msg.clientMessageId && (
-                                    <button type="button" onClick={() => void retryMessage(msg)} className="text-[10px] text-[#55D6BE] underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#55D6BE]">
+                                    <button type="button" onClick={() => void retryMessage(msg)} disabled={connectionStatus !== "connected"} className="text-[10px] text-[#55D6BE] underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#55D6BE] disabled:opacity-50">
                                         Retry safely
                                     </button>
                                 )}
